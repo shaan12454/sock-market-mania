@@ -104,23 +104,19 @@ export function GameApp() {
           </div>
         </div>
 
-        <div className="main" style={room === "computer" ? {} : { gridTemplateColumns: "1fr 320px" }}>
-          {room === "computer" ? (
-            <ComputerRoom
-              sock={sock} faction={player.faction} cooldowns={cooldowns} doAction={doAction}
-              market={market} coins={Number(player.sock_coins)} portfolio={portfolio} trade={trade}
-            />
-          ) : (
-            <>
-              {room === "living" && <LivingRoom sock={sock} faction={player.faction} cooldowns={cooldowns} doAction={doAction} />}
-              {room === "bathroom" && <Bathroom sock={sock} faction={player.faction} cooldowns={cooldowns} doAction={doAction} />}
-              {room === "kitchen" && <Kitchen sock={sock} faction={player.faction} cooldowns={cooldowns} doAction={doAction} />}
-              {room === "garage" && <Garage sock={sock} faction={player.faction} cooldowns={cooldowns} doAction={doAction} />}
-              {room === "shrine" && shrineUnlocked && <ShrineRoom sock={sock} faction={player.faction} cooldowns={cooldowns} doAction={doAction} />}
-            </>
-          )}
-
-          {room !== "computer" && (
+        {room === "computer" ? (
+          <ComputerRoom
+            sock={sock} faction={player.faction} cooldowns={cooldowns} doAction={doAction}
+            market={market} coins={Number(player.sock_coins)} portfolio={portfolio} trade={trade}
+          />
+        ) : (
+          <div className="main" style={{ gridTemplateColumns: "1fr 320px" }}>
+            {room === "living" && <LivingRoom sock={sock} faction={player.faction} cooldowns={cooldowns} doAction={doAction} />}
+            {room === "bathroom" && <Bathroom sock={sock} faction={player.faction} cooldowns={cooldowns} doAction={doAction} />}
+            {room === "kitchen" && <Kitchen sock={sock} faction={player.faction} cooldowns={cooldowns} doAction={doAction} />}
+            {room === "garage" && <Garage sock={sock} faction={player.faction} cooldowns={cooldowns} doAction={doAction} />}
+            {room === "shrine" && shrineUnlocked && <ShrineRoom sock={sock} faction={player.faction} cooldowns={cooldowns} doAction={doAction} />}
+            
             <div className="right box scrollbox">
               <h3>▌ LIVE FEED ▐</h3>
               <div className="headline-feed">
@@ -129,8 +125,8 @@ export function GameApp() {
                 ))}
               </div>
             </div>
-          )}
-        </div>
+          </div>
+        )}
 
         {room === "computer" && (
           <div className="ticker">

@@ -110,6 +110,17 @@
   min-height: 0;
 }
 
+.sock-game .computer-grid {
+  display: grid;
+  grid-template-columns: 220px 1fr 280px;
+  gap: 12px;
+  padding: 12px;
+  overflow: hidden;
+  min-height: 0;
+  flex: 1;
+  animation: flicker 0.18s ease;
+}
+
 .sock-game .center { overflow: hidden; display: flex; flex-direction: column; gap: 10px; }
 .sock-game .left, .sock-game .right { overflow: hidden; display: flex; flex-direction: column; gap: 8px; }
 
@@ -287,13 +298,59 @@
   background: #000;
   overflow: hidden;
   white-space: nowrap;
+  width: 100%;
 }
 .sock-game .ticker span {
   display: inline-block;
-  animation: scroll 40s linear infinite;
-  padding-left: 100%;
+  animation: scroll 45s linear infinite;
 }
-@keyframes scroll { 0% { transform: translateX(0);} 100% { transform: translateX(-100%);} }
+@keyframes scroll {
+  0% { transform: translateX(100vw); }
+  100% { transform: translateX(-100%); }
+}
+
+/* Smoke particles */
+.sock-game .smoke {
+  position: absolute;
+  color: #888888;
+  font-size: 16px;
+  font-family: inherit;
+  animation: smokeRise 2s linear infinite;
+  pointer-events: none;
+  text-shadow: 0 0 3px rgba(128,128,128,0.5);
+  z-index: 10;
+}
+@keyframes smokeRise {
+  0% { transform: translateY(0) scale(0.8); opacity: 0; }
+  20% { opacity: 0.8; }
+  80% { opacity: 0.3; }
+  100% { transform: translateY(-70px) scale(1.5); opacity: 0; }
+}
+
+/* Candle flame flicker */
+.sock-game .candle-flame {
+  display: inline-block;
+  pointer-events: none;
+  font-size: 16px;
+  text-shadow: 0 0 8px #ff8800, 0 0 16px #ff5500;
+  z-index: 5;
+}
+@keyframes flicker-flame {
+  0% { opacity: 0.7; transform: scale(0.9) translateY(0); }
+  50% { opacity: 0.85; transform: scale(1) translateY(-1px) rotate(-1deg); }
+  100% { opacity: 1; transform: scale(1.1) translateY(0) rotate(1deg); }
+}
+
+/* Altar floating */
+.sock-game .altar-sock {
+  display: inline-block;
+  animation: float-altar 3s ease-in-out infinite;
+}
+@keyframes float-altar {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+  100% { transform: translateY(0); }
+}
 
 .sock-game .scrollbox { overflow-y: auto; }
 .sock-game .scrollbox::-webkit-scrollbar { width: 10px; }
@@ -305,3 +362,523 @@
 @media (max-width: 900px) {
   .sock-game .main { grid-template-columns: 1fr; grid-template-rows: auto 1fr auto; }
 }
+
+/* Cartoony Rooms Styles */
+
+/* 1. Cozy Living Room */
+.sock-game .living-room-scene {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+}
+.sock-game .cozy-cushion-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.sock-game .velvet-cushion {
+  width: 130px;
+  height: 25px;
+  background: radial-gradient(ellipse at center, #d32f2f 0%, #b71c1c 100%);
+  border: 2px solid #5a0000;
+  border-radius: 50%;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.6), inset 0 3px 5px rgba(255,255,255,0.3);
+  margin-top: -10px;
+  z-index: 2;
+}
+.sock-game .living-sock-wrapper {
+  animation: float-altar 4s ease-in-out infinite;
+  z-index: 3;
+}
+.sock-game .fireplace {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 120px;
+  height: 140px;
+  background: #3e2723;
+  border: 4px solid #1a0c00;
+  border-radius: 4px;
+  position: relative;
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+}
+.sock-game .fireplace-hearth {
+  width: 80px;
+  height: 70px;
+  background: #000;
+  border: 2px solid #1a0c00;
+  position: absolute;
+  bottom: 0;
+  border-radius: 4px 4px 0 0;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+}
+.sock-game .fire-log {
+  width: 50px;
+  height: 12px;
+  background: #5d4037;
+  border: 2px solid #27120c;
+  z-index: 2;
+  position: absolute;
+  bottom: 5px;
+}
+.sock-game .fire-pixel {
+  position: absolute;
+  width: 10px;
+  height: 15px;
+  bottom: 12px;
+  background: #ff5722;
+  border-radius: 2px;
+  animation: fireBurn 0.5s infinite ease-in-out alternate;
+}
+.sock-game .fire-pixel:nth-child(2) {
+  background: #ffb300;
+  width: 8px;
+  height: 20px;
+  animation-delay: 0.15s;
+  margin-left: -12px;
+}
+.sock-game .fire-pixel:nth-child(3) {
+  background: #ff3d00;
+  width: 12px;
+  height: 12px;
+  animation-delay: 0.3s;
+  margin-left: 12px;
+}
+@keyframes fireBurn {
+  0% { transform: translateY(0) scaleY(1); opacity: 0.9; }
+  100% { transform: translateY(-5px) scaleY(1.4); opacity: 1; }
+}
+
+/* 2. Bathroom/Laundry Room */
+.sock-game .bathroom-scene {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr 1fr;
+  align-items: center;
+  justify-items: center;
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+  gap: 15px;
+}
+.sock-game .appliance-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+.sock-game .washing-machine {
+  width: 100px;
+  height: 130px;
+  background: #eceff1;
+  border: 4px solid #37474f;
+  border-radius: 8px;
+  position: relative;
+  box-shadow: 0 4px 0 rgba(0,0,0,0.3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.sock-game .washer-panel {
+  width: 100%;
+  height: 20px;
+  background: #cfd8dc;
+  border-bottom: 2px solid #37474f;
+  position: absolute;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 0 5px;
+}
+.sock-game .washer-dial {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #37474f;
+}
+.sock-game .washer-led {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #00ff41;
+  box-shadow: 0 0 4px #00ff41;
+}
+.sock-game .washer-door {
+  width: 66px;
+  height: 66px;
+  border-radius: 50%;
+  border: 5px solid #b0bec5;
+  background: radial-gradient(circle, #0288d1 30%, #01579b 100%);
+  position: relative;
+  overflow: hidden;
+  margin-top: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.sock-game .washer-sock-spinning {
+  font-size: 20px;
+  animation: washerSpin 1.2s linear infinite;
+  display: inline-block;
+}
+.sock-game .washer-bubbles {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-image: radial-gradient(circle, rgba(255,255,255,0.7) 1.5px, transparent 1.5px);
+  background-size: 10px 10px;
+  opacity: 0.5;
+  animation: floatBubbles 2.5s linear infinite;
+}
+@keyframes washerSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+@keyframes floatBubbles {
+  0% { background-position: 0 0; }
+  100% { background-position: 0 -20px; }
+}
+
+.sock-game .bathtub {
+  width: 130px;
+  height: 75px;
+  background: #e0f7fa;
+  border: 4px solid #00acc1;
+  border-radius: 0 0 35px 35px;
+  position: relative;
+  box-shadow: 0 4px 0 rgba(0,0,0,0.3);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  margin-top: 20px;
+}
+.sock-game .bath-water {
+  width: 100%;
+  height: 35px;
+  background: rgba(3,169,244,0.6);
+  position: absolute;
+  top: 0;
+  border-radius: 0 0 15px 15px;
+  overflow: hidden;
+}
+.sock-game .bath-bubble {
+  position: absolute;
+  background: rgba(255,255,255,0.6);
+  border-radius: 50%;
+  animation: riseBubble 2.5s infinite linear;
+}
+@keyframes riseBubble {
+  0% { transform: translateY(30px); opacity: 0; }
+  50% { opacity: 0.8; }
+  100% { transform: translateY(-15px); opacity: 0; }
+}
+
+.sock-game .toilet {
+  width: 80px;
+  height: 115px;
+  position: relative;
+}
+.sock-game .toilet-tank {
+  width: 60px;
+  height: 50px;
+  background: #f5f5f5;
+  border: 4px solid #757575;
+  border-radius: 4px;
+  position: absolute;
+  top: 0;
+  left: 10px;
+}
+.sock-game .toilet-bowl {
+  width: 70px;
+  height: 50px;
+  background: #e0e0e0;
+  border: 4px solid #757575;
+  border-radius: 0 0 30px 30px;
+  position: absolute;
+  bottom: 0;
+  left: 5px;
+}
+.sock-game .toilet-rim {
+  width: 80px;
+  height: 15px;
+  background: #f5f5f5;
+  border: 4px solid #757575;
+  border-radius: 8px;
+  position: absolute;
+  top: 50px;
+  left: 0;
+  z-index: 2;
+}
+.sock-game .toilet-flush-lever {
+  width: 12px;
+  height: 6px;
+  background: #9e9e9e;
+  border: 1px solid #616161;
+  position: absolute;
+  top: 10px;
+  left: 18px;
+  cursor: pointer;
+}
+
+/* 3. Kitchen */
+.sock-game .kitchen-scene {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  align-items: center;
+  justify-items: center;
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+  gap: 12px;
+}
+.sock-game .microwave {
+  width: 120px;
+  height: 90px;
+  background: #37474f;
+  border: 4px solid #212121;
+  border-radius: 4px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px;
+  box-shadow: 0 4px 0 rgba(0,0,0,0.3);
+}
+.sock-game .microwave-window {
+  width: 70px;
+  height: 66px;
+  background: rgba(255,160,0,0.25);
+  border: 3px solid #212121;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 0 10px rgba(255,160,0,0.5);
+}
+.sock-game .microwave-waves {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(0deg, rgba(255,235,59,0.1), rgba(255,235,59,0.1) 2px, transparent 2px, transparent 6px);
+  animation: microWaves 0.3s linear infinite;
+}
+@keyframes microWaves {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(6px); }
+}
+.sock-game .microwave-sock {
+  font-size: 18px;
+  animation: washerSpin 4s linear infinite;
+}
+.sock-game .microwave-panel {
+  width: 25px;
+  height: 66px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+.sock-game .microwave-clock {
+  font-size: 11px;
+  color: #ff3333;
+  font-family: monospace;
+  background: #000;
+  padding: 1px 3px;
+  border-radius: 2px;
+}
+.sock-game .microwave-keypad {
+  width: 18px;
+  height: 35px;
+  background: #263238;
+  border-radius: 2px;
+}
+
+.sock-game .fridge {
+  width: 90px;
+  height: 140px;
+  background: #eceff1;
+  border: 4px solid #78909c;
+  border-radius: 6px;
+  position: relative;
+  box-shadow: 0 4px 0 rgba(0,0,0,0.3);
+  transition: transform 0.2s;
+  cursor: pointer;
+}
+.sock-game .fridge:hover {
+  transform: scale(1.03);
+}
+.sock-game .fridge-handle {
+  width: 6px;
+  height: 25px;
+  background: #78909c;
+  position: absolute;
+  left: 8px;
+  top: 55px;
+  border-radius: 2px;
+}
+.sock-game .fridge-door-line {
+  width: 100%;
+  height: 3px;
+  background: #78909c;
+  position: absolute;
+  top: 45px;
+}
+.sock-game .fridge-frost {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0; left: 0;
+  background: rgba(224,247,250,0.25);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.sock-game .fridge:hover .fridge-frost {
+  opacity: 1;
+}
+
+.sock-game .stove {
+  width: 110px;
+  height: 95px;
+  background: #cfd8dc;
+  border: 4px solid #455a64;
+  border-radius: 4px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  padding: 5px;
+  box-shadow: 0 4px 0 rgba(0,0,0,0.3);
+}
+.sock-game .stove-burner-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.sock-game .stove-burner {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #37474f;
+  border: 3px solid #263238;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.sock-game .stove-burner.glowing {
+  border-color: #ff3d00;
+  box-shadow: 0 0 6px #ff3d00;
+}
+.sock-game .stove-burner-coil {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid #546e7a;
+}
+.sock-game .stove-burner.glowing .stove-burner-coil {
+  border-color: #ff9100;
+  background: #ff3d00;
+  box-shadow: 0 0 4px #ff9100;
+  animation: heatPulsate 1.5s ease-in-out infinite alternate;
+}
+
+/* 4. Garage */
+.sock-game .garage-scene {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+}
+.sock-game .fire-barrel {
+  width: 80px;
+  height: 110px;
+  background: linear-gradient(to right, #424242 0%, #212121 100%);
+  border: 3px solid #000;
+  border-radius: 8px 8px 4px 4px;
+  position: relative;
+  box-shadow: inset 0 0 15px rgba(0,0,0,0.8), 0 5px 10px rgba(0,0,0,0.5);
+}
+.sock-game .barrel-ring {
+  width: 100%;
+  height: 5px;
+  background: #212121;
+  border-top: 1px solid #757575;
+  border-bottom: 1px solid #000;
+  position: absolute;
+}
+.sock-game .barrel-ring-1 { top: 25px; }
+.sock-game .barrel-ring-2 { bottom: 25px; }
+.sock-game .barrel-fire-mouth {
+  width: 60px;
+  height: 10px;
+  background: #ff3d00;
+  position: absolute;
+  top: -5px;
+  left: 10px;
+  border-radius: 50%;
+  box-shadow: 0 0 12px #ff3d00;
+}
+.sock-game .barrel-flames {
+  position: absolute;
+  top: -24px;
+  left: 18px;
+  font-size: 24px;
+  animation: barrelFlicker 0.2s infinite alternate;
+}
+@keyframes barrelFlicker {
+  0% { transform: scale(0.9) rotate(-1deg); filter: brightness(1); }
+  100% { transform: scale(1.1) rotate(1deg); filter: brightness(1.2); }
+}
+
+.sock-game .crate-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.sock-game .crate {
+  width: 80px;
+  height: 55px;
+  background: #8d6e63;
+  border: 3px solid #4e342e;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: bold;
+  color: #3e2723;
+  margin-top: -3px;
+  cursor: pointer;
+  transition: transform 0.15s;
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.15);
+}
+.sock-game .crate:hover {
+  transform: translateY(-3px) rotate(1deg);
+}
+.sock-game .crate::after {
+  content: '';
+  position: absolute;
+  inset: 5px;
+  border: 2px dashed #4e342e;
+  pointer-events: none;
+}
+
+@keyframes heatPulsate {
+  0% { transform: scale(0.92); opacity: 0.85; }
+  100% { transform: scale(1.08); opacity: 1; }
+}
+

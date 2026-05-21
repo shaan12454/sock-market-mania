@@ -3,6 +3,15 @@ import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+  
+  const authHeader = req.headers.get("Authorization");
+  if (authHeader !== "Bearer sock-market-mania-cron-key-1337") {
+    return new Response(JSON.stringify({ error: "Unauthorized" }), { 
+      status: 401, 
+      headers: { ...corsHeaders, "Content-Type": "application/json" } 
+    });
+  }
+
   const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
   const { data: rows } = await supabase.from("market").select("*");
   if (!rows) return new Response("no market", { status: 500, headers: corsHeaders });

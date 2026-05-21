@@ -27,6 +27,20 @@ function drips(count: number) {
   ));
 }
 
+function smokeParticles(count: number) {
+  return Array.from({ length: count }).map((_, i) => (
+    <span
+      key={i}
+      className="smoke"
+      style={{
+        left: 40 + i * 15 + "px",
+        top: "10px",
+        animationDelay: i * 0.4 + "s",
+      }}
+    >◦</span>
+  ));
+}
+
 export function SockVisual({ sock }: { sock: Sock }) {
   const classes = ["sock"];
   if (sock.is_glowing) classes.push("glow");
@@ -83,6 +97,7 @@ export function SockVisual({ sock }: { sock: Sock }) {
       </svg>
       {sock.smell > 70 && stinkLines(4)}
       {sock.wetness > 50 && drips(4)}
+      {sock.is_charred && smokeParticles(5)}
       {sock.drip > 80 && (
         <div style={{ position: "absolute", bottom: 4, left: "50%", transform: "translateX(-50%)", color: "#ffd700", fontSize: 24, textShadow: "0 0 8px gold" }}>
           ⛓ ✦ ⛓

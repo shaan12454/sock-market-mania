@@ -1,1 +1,7 @@
 project_id = "jjnrcjqpkybzuwjbeqft"
+
+[functions.market-tick]
+verify_jwt = false
+
+[functions.trigger-global-event]
+verify_jwt = false

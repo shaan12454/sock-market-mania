@@ -147,8 +147,12 @@ export function usePortfolio(playerId: string | undefined) {
       });
     };
     load();
-    const interval = setInterval(load, 5000);
-    return () => clearInterval(interval);
+    const ch = supabase.channel(`portfolio-${playerId}`).on(
+      "postgres_changes",
+      { event: "*", schema: "public", table: "portfolios", filter: `player_id=eq.${playerId}` },
+      () => load()
+    ).subscribe();
+    return () => { supabase.removeChannel(ch); };
   }, [playerId]);
   return portfolio;
 }
@@ -194,21 +198,6 @@ export function usePresence() {
 }
 
 export function useTicker() {
-  // Trigger market drift every 20s (client-driven, but only one client fires due to throttle)
-  useEffect(() => {
-    const key = "sockstock_last_tick";
-    const tick = async () => {
-      const last = parseInt(localStorage.getItem(key) || "0", 10);
-      if (Date.now() - last < 18000) return;
-      localStorage.setItem(key, String(Date.now()));
-      await supabase.functions.invoke("market-tick");
-      // Occasionally trigger a global event check
-      if (Math.random() < 0.15) {
-        await supabase.functions.invoke("trigger-global-event", { body: {} });
-      }
-    };
-    tick();
-    const i = setInterval(tick, 20000);
-    return () => clearInterval(i);
-  }, []);
+  // Market ticking is handled server-side via pg_cron.
+  // This hook is kept empty to avoid breaking imports in other parts of the codebase.
 }
