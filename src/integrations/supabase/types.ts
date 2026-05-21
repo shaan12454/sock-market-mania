@@ -14,7 +14,221 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      action_cooldowns: {
+        Row: {
+          action_id: string
+          last_used: string
+          player_id: string
+        }
+        Insert: {
+          action_id: string
+          last_used: string
+          player_id: string
+        }
+        Update: {
+          action_id?: string
+          last_used?: string
+          player_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "action_cooldowns_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      global_events: {
+        Row: {
+          description: string | null
+          event_name: string
+          id: number
+          triggered_at: string | null
+        }
+        Insert: {
+          description?: string | null
+          event_name: string
+          id?: number
+          triggered_at?: string | null
+        }
+        Update: {
+          description?: string | null
+          event_name?: string
+          id?: number
+          triggered_at?: string | null
+        }
+        Relationships: []
+      }
+      headlines: {
+        Row: {
+          created_at: string | null
+          event_type: string | null
+          id: number
+          text: string
+        }
+        Insert: {
+          created_at?: string | null
+          event_type?: string | null
+          id?: number
+          text: string
+        }
+        Update: {
+          created_at?: string | null
+          event_type?: string | null
+          id?: number
+          text?: string
+        }
+        Relationships: []
+      }
+      market: {
+        Row: {
+          price: number
+          price_history: number[] | null
+          sock_type: string
+          updated_at: string | null
+        }
+        Insert: {
+          price: number
+          price_history?: number[] | null
+          sock_type: string
+          updated_at?: string | null
+        }
+        Update: {
+          price?: number
+          price_history?: number[] | null
+          sock_type?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      players: {
+        Row: {
+          created_at: string | null
+          faction: string | null
+          id: string
+          sock_coins: number | null
+          username: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          faction?: string | null
+          id?: string
+          sock_coins?: number | null
+          username?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          faction?: string | null
+          id?: string
+          sock_coins?: number | null
+          username?: string | null
+        }
+        Relationships: []
+      }
+      portfolios: {
+        Row: {
+          player_id: string
+          shares: number | null
+          sock_type: string
+        }
+        Insert: {
+          player_id: string
+          shares?: number | null
+          sock_type: string
+        }
+        Update: {
+          player_id?: string
+          shares?: number | null
+          sock_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "portfolios_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "portfolios_sock_type_fkey"
+            columns: ["sock_type"]
+            isOneToOne: false
+            referencedRelation: "market"
+            referencedColumns: ["sock_type"]
+          },
+        ]
+      }
+      sock: {
+        Row: {
+          age_days: number | null
+          aura: number | null
+          chaos_level: number | null
+          cleanliness: number | null
+          cult_influence: number | null
+          drip: number | null
+          emotional_stability: number | null
+          has_crown: boolean | null
+          has_duct_tape: boolean | null
+          has_glasses: boolean | null
+          has_mold: boolean | null
+          heat_damage: number | null
+          id: number
+          intelligence: number | null
+          is_charred: boolean | null
+          is_glowing: boolean | null
+          radiation: number | null
+          smell: number | null
+          updated_at: string | null
+          wetness: number | null
+        }
+        Insert: {
+          age_days?: number | null
+          aura?: number | null
+          chaos_level?: number | null
+          cleanliness?: number | null
+          cult_influence?: number | null
+          drip?: number | null
+          emotional_stability?: number | null
+          has_crown?: boolean | null
+          has_duct_tape?: boolean | null
+          has_glasses?: boolean | null
+          has_mold?: boolean | null
+          heat_damage?: number | null
+          id?: number
+          intelligence?: number | null
+          is_charred?: boolean | null
+          is_glowing?: boolean | null
+          radiation?: number | null
+          smell?: number | null
+          updated_at?: string | null
+          wetness?: number | null
+        }
+        Update: {
+          age_days?: number | null
+          aura?: number | null
+          chaos_level?: number | null
+          cleanliness?: number | null
+          cult_influence?: number | null
+          drip?: number | null
+          emotional_stability?: number | null
+          has_crown?: boolean | null
+          has_duct_tape?: boolean | null
+          has_glasses?: boolean | null
+          has_mold?: boolean | null
+          heat_damage?: number | null
+          id?: number
+          intelligence?: number | null
+          is_charred?: boolean | null
+          is_glowing?: boolean | null
+          radiation?: number | null
+          smell?: number | null
+          updated_at?: string | null
+          wetness?: number | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
