@@ -1,7 +1,7 @@
 import { FACTIONS } from "../actions";
 import { useState } from "react";
 
-export function FactionModal({ onPick }: { onPick: (username: string, faction: string) => Promise<void> }) {
+export function FactionModal({ onPick }: { onPick: (username: string, faction: string) => Promise<unknown> }) {
   const [username, setUsername] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
