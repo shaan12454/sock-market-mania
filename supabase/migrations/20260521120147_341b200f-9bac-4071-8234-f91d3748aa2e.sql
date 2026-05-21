@@ -1,0 +1,1 @@
+DROP POLICY IF EXISTS "anon insert players" ON public.players;
