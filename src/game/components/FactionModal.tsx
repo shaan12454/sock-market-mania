@@ -1,7 +1,12 @@
 import { FACTIONS } from "../actions";
 import { useState } from "react";
 
-export function FactionModal({ onPick }: { onPick: (username: string, faction: string) => Promise<unknown> }) {
+export function FactionModal({
+  onPick, onSpectate,
+}: {
+  onPick: (username: string, faction: string) => Promise<unknown>;
+  onSpectate?: () => void;
+}) {
   const [username, setUsername] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -18,11 +23,10 @@ export function FactionModal({ onPick }: { onPick: (username: string, faction: s
 
   return (
     <div className="modal-overlay">
-      <div className="modal">
+      <div className="modal" style={{ maxWidth: 640 }}>
         <h2>★ THE SOCK MARKET v2.3 ★</h2>
-        <div>The sock has been waiting.</div>
-        <div>It has been waiting for 112 days.</div>
-        <div style={{ margin: "16px 0" }}>
+        <div style={{ opacity: 0.85 }}>One global sock. Thousands of degenerates.</div>
+        <div style={{ margin: "14px 0 8px" }}>
           <div style={{ marginBottom: 6 }}>ENTER HANDLE:</div>
           <input
             value={username}
@@ -42,6 +46,12 @@ export function FactionModal({ onPick }: { onPick: (username: string, faction: s
           ))}
         </div>
         {error && <div className="err" style={{ marginTop: 12 }}>! {error}</div>}
+        {onSpectate && (
+          <div style={{ marginTop: 14, opacity: 0.8 }}>
+            just looking?{" "}
+            <button onClick={onSpectate} style={{ fontSize: 13 }}>👁 SPECTATE AS GUEST</button>
+          </div>
+        )}
       </div>
     </div>
   );
