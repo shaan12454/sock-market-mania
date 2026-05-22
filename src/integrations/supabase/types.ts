@@ -40,6 +40,33 @@ export type Database = {
           },
         ]
       }
+      chat_messages: {
+        Row: {
+          created_at: string
+          faction: string | null
+          id: number
+          player_id: string | null
+          text: string
+          username: string
+        }
+        Insert: {
+          created_at?: string
+          faction?: string | null
+          id?: number
+          player_id?: string | null
+          text: string
+          username: string
+        }
+        Update: {
+          created_at?: string
+          faction?: string | null
+          id?: number
+          player_id?: string | null
+          text?: string
+          username?: string
+        }
+        Relationships: []
+      }
       global_events: {
         Row: {
           description: string | null
@@ -63,18 +90,24 @@ export type Database = {
       }
       headlines: {
         Row: {
+          actor_faction: string | null
+          actor_username: string | null
           created_at: string | null
           event_type: string | null
           id: number
           text: string
         }
         Insert: {
+          actor_faction?: string | null
+          actor_username?: string | null
           created_at?: string | null
           event_type?: string | null
           id?: number
           text: string
         }
         Update: {
+          actor_faction?: string | null
+          actor_username?: string | null
           created_at?: string | null
           event_type?: string | null
           id?: number
@@ -105,24 +138,36 @@ export type Database = {
       }
       players: {
         Row: {
+          actions_count: number
+          chaos_contributed: number
           created_at: string | null
           faction: string | null
           id: string
+          last_seen: string
           sock_coins: number | null
+          total_profit: number
           username: string | null
         }
         Insert: {
+          actions_count?: number
+          chaos_contributed?: number
           created_at?: string | null
           faction?: string | null
           id?: string
+          last_seen?: string
           sock_coins?: number | null
+          total_profit?: number
           username?: string | null
         }
         Update: {
+          actions_count?: number
+          chaos_contributed?: number
           created_at?: string | null
           faction?: string | null
           id?: string
+          last_seen?: string
           sock_coins?: number | null
+          total_profit?: number
           username?: string | null
         }
         Relationships: []
