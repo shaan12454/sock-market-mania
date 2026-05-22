@@ -10,6 +10,10 @@ import {
   ComputerRoom, LivingRoom, Bathroom, Kitchen, Garage, ShrineRoom,
 } from "./rooms/Rooms";
 import { SFX } from "./sound";
+import { Chat } from "./components/Chat";
+import { Leaderboard } from "./components/Leaderboard";
+import { OnboardingModal, useOnboarding } from "./components/Onboarding";
+import { ShareButton } from "./components/ShareButton";
 
 const ROOMS = [
   { id: "computer", label: "💻 COMPUTER" },
@@ -18,6 +22,7 @@ const ROOMS = [
   { id: "kitchen", label: "🍳 KITCHEN" },
   { id: "garage", label: "📦 GARAGE" },
   { id: "shrine", label: "🕯 SHRINE" },
+  { id: "social", label: "💬 SOCIAL" },
 ];
 
 export function GameApp() {
@@ -31,11 +36,18 @@ export function GameApp() {
   const { cooldowns, reload: reloadCooldowns } = useCooldowns(player?.id);
   useTicker();
 
+  const { seen: onboarded, dismiss: dismissOnboarding } = useOnboarding();
+  const [showOnboarding, setShowOnboarding] = useState(!onboarded);
+  const [spectator, setSpectator] = useState(false);
   const [room, setRoom] = useState("computer");
   const [error, setError] = useState<string | null>(null);
 
   async function doAction(action_id: string) {
-    if (!player) return;
+    if (!player) {
+      setError("PICK A FACTION TO PLAY");
+      setTimeout(() => setError(null), 2500);
+      return;
+    }
     SFX.click();
     const { data, error: err } = await supabase.functions.invoke("perform-action", {
       body: { action_id, player_id: player.id, faction: player.faction },
@@ -53,7 +65,11 @@ export function GameApp() {
   }
 
   async function trade(sock_type: string, qty: number, dir: "buy" | "sell") {
-    if (!player) return;
+    if (!player) {
+      setError("PICK A FACTION TO TRADE");
+      setTimeout(() => setError(null), 2500);
+      return;
+    }
     SFX.trade();
     const { data, error: err } = await supabase.functions.invoke("execute-trade", {
       body: { player_id: player.id, sock_type, quantity: qty, direction: dir },
@@ -76,17 +92,24 @@ export function GameApp() {
     );
   }
 
-  if (!player) {
+  if (!player && !spectator) {
     return (
       <div className="sock-game">
         <div className="crt-vignette" />
-        <FactionModal onPick={register} />
+        {showOnboarding && <OnboardingModal onClose={() => { dismissOnboarding(); setShowOnboarding(false); }} />}
+        {!showOnboarding && (
+          <FactionModal
+            onPick={register}
+            onSpectate={() => setSpectator(true)}
+          />
+        )}
       </div>
     );
   }
 
   const shrineUnlocked = sock.cult_influence >= 60;
   const today = new Date().toLocaleDateString("en-US", { month: "2-digit", day: "2-digit", year: "numeric" });
+  const liveActor = player ?? null;
 
   return (
     <div className="sock-game">
@@ -96,27 +119,51 @@ export function GameApp() {
         <div className="topbar">
           <div className="brand">★ SOCK STOCK v2.3 ★</div>
           <div className="meta">
-            <span>[{today}]</span>
+            <span className="meta-date">[{today}]</span>
             <span>👥 {presence} ONLINE</span>
-            <span>👤 {player.username} ({player.faction})</span>
-            <span>💰 {Number(player.sock_coins).toFixed(0)} SC</span>
-            <button style={{ fontSize: 12, padding: "2px 8px" }} onClick={() => { if (confirm("Quit current session?")) logout(); }}>QUIT</button>
+            {player ? (
+              <>
+                <span className="meta-user">👤 {player.username} ({player.faction})</span>
+                <span>💰 {Number(player.sock_coins).toFixed(0)} SC</span>
+              </>
+            ) : (
+              <span style={{ color: "var(--amber)" }}>👁 SPECTATING</span>
+            )}
+            <ShareButton sock={sock} online={presence} />
+            {player ? (
+              <button style={{ fontSize: 12, padding: "2px 8px" }} onClick={() => { if (confirm("Quit current session?")) logout(); }}>QUIT</button>
+            ) : (
+              <button style={{ fontSize: 12, padding: "2px 8px" }} onClick={() => setSpectator(false)}>JOIN ►</button>
+            )}
           </div>
         </div>
 
         {room === "computer" ? (
           <ComputerRoom
-            sock={sock} faction={player.faction} cooldowns={cooldowns} doAction={doAction}
-            market={market} coins={Number(player.sock_coins)} portfolio={portfolio} trade={trade}
+            sock={sock} faction={player?.faction ?? ""} cooldowns={cooldowns} doAction={doAction}
+            market={market} coins={Number(player?.sock_coins ?? 0)} portfolio={portfolio} trade={trade}
           />
+        ) : room === "social" ? (
+          <div className="main social-grid">
+            <Leaderboard myId={player?.id ?? null} />
+            <Chat player={liveActor} />
+            <div className="right box scrollbox">
+              <h3>▌ LIVE FEED ▐</h3>
+              <div className="headline-feed">
+                {headlines.map((h) => (
+                  <div key={h.id} className={h.event_type === "global" ? "global" : ""}>{h.text}</div>
+                ))}
+              </div>
+            </div>
+          </div>
         ) : (
           <div className="main" style={{ gridTemplateColumns: "1fr 320px" }}>
-            {room === "living" && <LivingRoom sock={sock} faction={player.faction} cooldowns={cooldowns} doAction={doAction} />}
-            {room === "bathroom" && <Bathroom sock={sock} faction={player.faction} cooldowns={cooldowns} doAction={doAction} />}
-            {room === "kitchen" && <Kitchen sock={sock} faction={player.faction} cooldowns={cooldowns} doAction={doAction} />}
-            {room === "garage" && <Garage sock={sock} faction={player.faction} cooldowns={cooldowns} doAction={doAction} />}
-            {room === "shrine" && shrineUnlocked && <ShrineRoom sock={sock} faction={player.faction} cooldowns={cooldowns} doAction={doAction} />}
-            
+            {room === "living" && <LivingRoom sock={sock} faction={player?.faction ?? ""} cooldowns={cooldowns} doAction={doAction} />}
+            {room === "bathroom" && <Bathroom sock={sock} faction={player?.faction ?? ""} cooldowns={cooldowns} doAction={doAction} />}
+            {room === "kitchen" && <Kitchen sock={sock} faction={player?.faction ?? ""} cooldowns={cooldowns} doAction={doAction} />}
+            {room === "garage" && <Garage sock={sock} faction={player?.faction ?? ""} cooldowns={cooldowns} doAction={doAction} />}
+            {room === "shrine" && shrineUnlocked && <ShrineRoom sock={sock} faction={player?.faction ?? ""} cooldowns={cooldowns} doAction={doAction} />}
+
             <div className="right box scrollbox">
               <h3>▌ LIVE FEED ▐</h3>
               <div className="headline-feed">
@@ -168,6 +215,10 @@ export function GameApp() {
             <div style={{ marginTop: 14, fontSize: 12 }}>(click to dismiss)</div>
           </div>
         </div>
+      )}
+
+      {!onboarded && player && showOnboarding && (
+        <OnboardingModal onClose={() => { dismissOnboarding(); setShowOnboarding(false); }} />
       )}
     </div>
   );
