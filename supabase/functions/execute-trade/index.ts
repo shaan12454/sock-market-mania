@@ -30,7 +30,8 @@ Deno.serve(async (req) => {
     const price = Number(market.price);
     const totalCost = price * qty;
 
-    const { data: player } = await supabase.from("players").select("sock_coins").eq("id", player_id).single();
+    const { data: player } = await supabase.from("players")
+      .select("sock_coins, total_profit, username, faction").eq("id", player_id).single();
     if (!player) {
       return new Response(JSON.stringify({ error: "Player not found" }), {
         status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -43,29 +44,33 @@ Deno.serve(async (req) => {
           status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
-      await supabase.from("players").update({ sock_coins: Number(player.sock_coins) - totalCost }).eq("id", player_id);
-      const { data: existing } = await supabase
-        .from("portfolios").select("shares")
+      await supabase.from("players").update({
+        sock_coins: Number(player.sock_coins) - totalCost,
+        last_seen: new Date().toISOString(),
+      }).eq("id", player_id);
+      const { data: existing } = await supabase.from("portfolios").select("shares")
         .eq("player_id", player_id).eq("sock_type", sock_type).maybeSingle();
       await supabase.from("portfolios").upsert({
         player_id, sock_type, shares: (existing?.shares ?? 0) + qty,
       });
-      // buying nudges price up slightly
       const newPrice = price + Math.min(5, qty * 0.5);
       const history = (market.price_history || []) as number[];
       await supabase.from("market").update({
         price: newPrice, price_history: [...history.slice(-19), newPrice],
       }).eq("sock_type", sock_type);
     } else {
-      const { data: existing } = await supabase
-        .from("portfolios").select("shares")
+      const { data: existing } = await supabase.from("portfolios").select("shares")
         .eq("player_id", player_id).eq("sock_type", sock_type).maybeSingle();
       if (!existing || existing.shares < qty) {
         return new Response(JSON.stringify({ error: "NOT_ENOUGH_SHARES" }), {
           status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
-      await supabase.from("players").update({ sock_coins: Number(player.sock_coins) + totalCost }).eq("id", player_id);
+      await supabase.from("players").update({
+        sock_coins: Number(player.sock_coins) + totalCost,
+        total_profit: Number(player.total_profit ?? 0) + totalCost,
+        last_seen: new Date().toISOString(),
+      }).eq("id", player_id);
       await supabase.from("portfolios").update({ shares: existing.shares - qty })
         .eq("player_id", player_id).eq("sock_type", sock_type);
       const newPrice = Math.max(1, price - Math.min(5, qty * 0.5));
@@ -73,6 +78,15 @@ Deno.serve(async (req) => {
       await supabase.from("market").update({
         price: newPrice, price_history: [...history.slice(-19), newPrice],
       }).eq("sock_type", sock_type);
+
+      // Big sales make headlines
+      if (totalCost >= 500) {
+        await supabase.from("headlines").insert({
+          text: `${player.username} cashes out ${qty}× ${sock_type.replace("_sock","").toUpperCase()} for ${totalCost.toFixed(0)} SC.`,
+          event_type: "trade",
+          actor_username: player.username, actor_faction: player.faction,
+        });
+      }
     }
 
     return new Response(JSON.stringify({ success: true }), {
