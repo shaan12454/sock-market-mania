@@ -882,3 +882,81 @@
   100% { transform: scale(1.08); opacity: 1; }
 }
 
+
+/* ===== Social / Chat / Leaderboard ===== */
+.sock-game .social-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+  padding: 12px;
+  overflow: hidden;
+  min-height: 0;
+}
+.sock-game .chat-box {
+  display: flex; flex-direction: column;
+  min-height: 0; overflow: hidden;
+}
+.sock-game .chat-feed {
+  flex: 1; overflow-y: auto;
+  font-size: 15px; line-height: 1.45;
+  padding: 4px 2px;
+  min-height: 120px;
+}
+.sock-game .chat-line {
+  padding: 2px 4px;
+  border-bottom: 1px dashed rgba(0,255,65,0.12);
+  animation: fadeIn 0.3s ease;
+  word-break: break-word;
+}
+.sock-game .chat-user { font-weight: bold; }
+.sock-game .chat-text { opacity: 0.9; }
+.sock-game .chat-form {
+  display: flex; gap: 6px; margin-top: 6px;
+}
+.sock-game .chat-form input { flex: 1; min-width: 0; }
+
+.sock-game .lb-tabs { display: flex; gap: 4px; }
+.sock-game .lb-tabs button { font-size: 13px; padding: 2px 6px; }
+.sock-game .lb-tabs .lb-active { background: var(--green); color: #000; text-shadow: none; }
+.sock-game .lb-list {
+  flex: 1; overflow-y: auto;
+  font-size: 14px;
+}
+.sock-game .lb-row {
+  display: flex; gap: 8px; align-items: center;
+  padding: 3px 4px;
+  border-bottom: 1px dashed rgba(0,255,65,0.12);
+}
+.sock-game .lb-row.lb-me {
+  background: rgba(255,176,0,0.12);
+  border-left: 3px solid var(--amber);
+}
+
+/* ===== Mobile layout ===== */
+@media (max-width: 900px) {
+  .sock-game { font-size: 16px; }
+  .sock-game .topbar { flex-direction: column; gap: 4px; padding: 6px 10px; align-items: flex-start; }
+  .sock-game .topbar .brand { font-size: 18px; }
+  .sock-game .topbar .meta { flex-wrap: wrap; gap: 10px; font-size: 13px; }
+  .sock-game .meta-date { display: none; }
+  .sock-game .navbar { gap: 4px; padding: 6px 8px; overflow-x: auto; flex-wrap: nowrap; }
+  .sock-game .navbar button { white-space: nowrap; font-size: 13px; padding: 3px 8px; }
+  .sock-game .main, .sock-game .computer-grid, .sock-game .social-grid {
+    grid-template-columns: 1fr !important;
+    grid-auto-rows: minmax(220px, auto);
+    overflow-y: auto;
+    padding: 8px;
+  }
+  .sock-game .right, .sock-game .left { max-height: 240px; }
+  .sock-game .ticker { font-size: 13px; }
+  .sock-game .modal { width: 95%; padding: 18px 16px; }
+  .sock-game .modal h2 { font-size: 20px; }
+  .sock-game .factions { grid-template-columns: 1fr !important; }
+  .sock-game .bathroom-scene,
+  .sock-game .kitchen-scene,
+  .sock-game .garage-scene,
+  .sock-game .living-room-scene {
+    transform: scale(0.8);
+    transform-origin: center;
+  }
+}
